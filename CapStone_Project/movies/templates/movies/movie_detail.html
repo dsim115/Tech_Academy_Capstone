@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ m.title }} — Details{% endblock %}
+
+{% block content %}
+  <div class="hero">
+    <h1 style="margin-bottom:.25rem;">{{ m.title|default:"Untitled" }}</h1>
+    <p class="lead" style="margin-bottom:1rem;">
+      {{ m.release_date|date:"F j, Y"|default:"Release date N/A" }}
+      {% if m.runtime_minutes %} • {{ m.runtime_minutes }} min{% endif %}
+      {% if m.get_genre_display %} • {{ m.get_genre_display }}{% endif %}
+      {% if m.rating %} • ★ {{ m.rating }}{% endif %}
+      • Watched: {{ m.watched|yesno:"Yes,No" }}
+    </p>
+
+    <!-- actions -->
+    <div style="display:flex; gap:.5rem; margin:.75rem 0 1rem;">
+      <a href="{% url 'movies:edit' m.pk %}" class="btn">Edit</a>
+      <!-- open confirm modal instead of navigating -->
+      <button type="button" class="btn btn-secondary" id="openDeleteModal">Delete</button>
+    </div>
+
+    {% if m.notes %}
+      <div class="card" style="margin-top:.75rem;">
+        <h3>Notes</h3>
+        <p>{{ m.notes|linebreaksbr }}</p>
+      </div>
+    {% endif %}
+
+    <div class="grid" style="margin-top:1rem;">
+      <div class="card">
+        <h3>Database Meta</h3>
+        <p class="lead">Added {{ m.created_at|timesince }} ago</p>
+        {% if m.updated_at %}<p class="lead">Updated {{ m.updated_at|timesince }} ago</p>{% endif %}
+        <p><small>ID: {{ m.pk }}</small></p>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:.5rem; margin-top:1rem;">
+      <a href="{% url 'movies:list' %}" class="btn btn-secondary">Back to Browse</a>
+      <a href="{% url 'movies:home' %}" class="btn btn-secondary">Movies Home</a>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="mb-modal" id="deleteModal" aria-hidden="true">
+    <div class="mb-modal__backdrop" id="modalBackdrop"></div>
+    <div class="mb-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+      <h2 id="deleteTitle" style="margin:0 0 .5rem;">Delete Movie</h2>
+      <p class="lead" style="margin:0 0 1rem;">Are you sure you want to permanently delete
+        <strong>“{{ m.title|default:'Untitled' }}”</strong>? This cannot be undone.
+      </p>
+      <form method="post" action="{% url 'movies:delete' m.pk %}">
+        {% csrf_token %}
+        <div style="display:flex; gap:.5rem;">
+          <button type="submit" class="btn btn-danger">Yes, delete</button>
+          <button type="button" class="btn btn-secondary" id="closeDeleteModal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const modal = document.getElementById('deleteModal');
+      const openBtn = document.getElementById('openDeleteModal');
+      const closeBtn = document.getElementById('closeDeleteModal');
+      const backdrop = document.getElementById('modalBackdrop');
+
+      function openModal(){ modal.setAttribute('aria-hidden','false'); }
+      function closeModal(){ modal.setAttribute('aria-hidden','true'); }
+
+      openBtn?.addEventListener('click', openModal);
+      closeBtn?.addEventListener('click', closeModal);
+      backdrop?.addEventListener('click', closeModal);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    })();
+  </script>
+{% endblock %}

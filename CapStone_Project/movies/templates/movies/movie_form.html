@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}{% if is_edit %}Edit Movie — {{ movie.title }}{% else %}Add a Movie{% endif %}{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>{% if is_edit %}Edit Movie{% else %}Add a Movie{% endif %}</h1>
+  <p class="lead">{% if is_edit %}Update details and save changes.{% else %}Enter details and hit save. Fields with * are required.{% endif %}</p>
+
+  {% if messages %}
+    <ul class="flash-list">
+      {% for message in messages %}
+        <li class="flash flash-{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" class="mb-form">
+    {% csrf_token %}
+    <div class="form-grid">
+      {{ form.as_p }}
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn">
+        {% if is_edit %}Save Changes{% else %}Save Movie{% endif %}
+      </button>
+      {% if is_edit %}
+        <a href="{% url 'movies:detail' movie.pk %}" class="btn btn-secondary">Cancel</a>
+      {% else %}
+        <a href="{% url 'movies:home' %}" class="btn btn-secondary">Cancel</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

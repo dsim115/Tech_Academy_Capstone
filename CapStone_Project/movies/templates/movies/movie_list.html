@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}All Movies — MovieBase{% endblock %}
+
+{% block content %}
+  <div class="hero">
+    <h1>All Movies</h1>
+    <p class="lead">Browse your collection. Use search and sort to find things quickly.</p>
+
+    <!-- Search + Sort -->
+    <form method="get" style="display:flex; gap:.6rem; flex-wrap:wrap; margin:.75rem 0 1rem;">
+      <input type="text" name="q" aria-label="Search movies" value="{{ q }}" placeholder="Search title or notes"
+             style="flex:1; min-width:220px; padding:.6rem .7rem; border-radius:10px; border:1px solid var(--border); background:#0b1327; color:#e5e7eb;">
+      <select name="sort" aria-label="Sort movies"
+              style="padding:.6rem .7rem; border-radius:10px; border:1px solid var(--border); background:#0b1327; color:#e5e7eb;">
+        <option value="-created" {% if sort == "-created" %}selected{% endif %}>Newest first</option>
+        <option value="created"  {% if sort == "created" %}selected{% endif %}>Oldest first</option>
+        <option value="title"    {% if sort == "title" %}selected{% endif %}>Title A→Z</option>
+        <option value="-title"   {% if sort == "-title" %}selected{% endif %}>Title Z→A</option>
+        <option value="-rating"  {% if sort == "-rating" %}selected{% endif %}>Rating high→low</option>
+        <option value="rating"   {% if sort == "rating" %}selected{% endif %}>Rating low→high</option>
+        <option value="-release" {% if sort == "-release" %}selected{% endif %}>Release date new→old</option>
+        <option value="release"  {% if sort == "release" %}selected{% endif %}>Release date old→new</option>
+      </select>
+      <button class="btn" type="submit">Apply</button>
+    </form>
+
+    <!-- Results meta -->
+    <p class="lead" style="margin:.25rem 0 1rem;">
+      Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ total_count }} result{{ total_count|pluralize }}
+    </p>
+
+    <!-- List grid -->
+    {% if page_obj.object_list %}
+      <div class="grid">
+        {% for m in page_obj.object_list %}
+          <div class="card">
+            <h3>
+              <a href="{% url 'movies:detail' m.pk %}">{{ m.title|default:"Untitled" }}</a>
+            </h3>
+            <p class="lead">
+              {{ m.release_date|date:"F j, Y"|default:"Release date N/A" }}
+              • {{ m.runtime_minutes|default:"?" }} min
+              • {{ m.get_genre_display|default:"Genre N/A" }}
+              {% if m.rating %} • ★ {{ m.rating }}{% endif %}
+              • Watched: {{ m.watched|yesno:"Yes,No" }}
+            </p>
+            {% if m.notes %}
+              <p>{{ m.notes|truncatechars:140 }}</p>
+            {% endif %}
+            <small style="color:#94a3b8;">Added {{ m.created_at|timesince }} ago</small>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination / Load more -->
+      <div style="display:flex; gap:.5rem; margin-top:1rem;">
+        {% if page_obj.has_previous %}
+          <a class="btn btn-secondary"
+             href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+            ← Previous
+          </a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+          <!-- Acts like a "Load more" -->
+          <a class="btn"
+             href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q|urlencode }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">
+            Load more
+          </a>
+        {% endif %}
+      </div>
+
+    {% else %}
+      <p class="lead">No movies found. Try clearing filters or <a href="{% url 'movies:create' %}" class="btn" style="margin-left:.3rem;">Add a Movie</a></p>
+    {% endif %}
+  </div>
+{% endblock %}

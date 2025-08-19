@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Welcome to MovieBase{% endblock %}
+{% block content %}
+  <section class="home-hero">
+    <div class="home-hero-text">
+      <h1>Welcome to MovieBase</h1>
+      <p class="lead">Track films you love. CRUD, API search, and scraping coming next.</p>
+      <a href="{% url 'movies:home' %}" class="btn">Open Movies App</a>
+    </div>
+    <div class="home-hero-media">
+      <img src="{% static 'movies/img/movies-hero.png' %}" alt="Cinema auditorium" class="home-hero-img">
+    </div>
+  </section>
+{% endblock %}

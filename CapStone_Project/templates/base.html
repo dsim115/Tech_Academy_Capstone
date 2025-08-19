@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}MovieBase{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'movies/css/style.css' %}">
+</head>
+<body class="site-bg">
+  <nav class="navbar">
+     <div class="navbar-inner">
+      <a href="{% url 'project-home' %}" class="brand">MovieBase</a>
+    <div style="margin-left:auto; display:flex; gap:.25rem;">
+      <a href="{% url 'project-home' %}" aria-current="page">Home</a>
+      <a href="{% url 'movies:home' %}">Movies</a>
+    </div>
+  </div>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">© {% now 'Y' %} MovieBase · Django</footer>
+</body>
+</html>

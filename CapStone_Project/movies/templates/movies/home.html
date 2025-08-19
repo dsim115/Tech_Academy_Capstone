@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}MovieBase — App Home{% endblock %}
+
+{% block content %}
+  <div class="hero">
+    <h1>Welcome to MovieBase</h1>
+    <p class="lead">Track films you love. CRUD, API, and scraping coming next.</p>
+
+    <!-- ACTIONS (above the grid, outside the for-loop) -->
+    <div style="display:flex; gap:.5rem; margin:.5rem 0 1rem;">
+      <a href="{% url 'movies:create' %}" class="btn">Add a Movie</a>
+      <a href="{% url 'movies:list' %}" class="btn btn-secondary">Browse All</a>
+    </div>
+
+    {% if movies %}
+      <div class="grid">
+        {% for m in movies %}
+          <div class="card">
+            <h3>
+              <a href="{% url 'movies:detail' m.pk %}" style="text-decoration:none; color:inherit;">
+                {{ m.title }}
+              </a>
+            </h3>
+            <p class="lead">
+              {% if m.release_date %}{{ m.release_date }} • {% endif %}
+              {% if m.runtime_minutes %}{{ m.runtime_minutes }} min • {% endif %}
+              {{ m.get_genre_display }}
+              {% if m.rating %} • ★ {{ m.rating }}{% endif %}
+              {% if m.watched %} • Watched{% endif %}
+            </p>
+            {% if m.notes %}<p>{{ m.notes|truncatechars:120 }}</p>{% endif %}
+
+            <div style="margin-top:.5rem;">
+              <a href="{% url 'movies:detail' m.pk %}" class="btn btn-secondary">Details</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="lead">No movies yet — add your first one!</p>
+    {% endif %}
+  </div>
+{% endblock %}

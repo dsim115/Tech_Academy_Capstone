@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Delete “{{ m.title }}” — MovieBase{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>Delete Movie</h1>
+  <p class="lead">Are you sure you want to permanently delete <strong>“{{ m.title }}”</strong>? This cannot be undone.</p>
+
+  <form method="post" style="margin-top:1rem;">
+    {% csrf_token %}
+    <button type="submit" class="btn" style="background:linear-gradient(90deg,#ef4444,#b91c1c);">Yes, delete</button>
+    <a href="{% url 'movies:detail' m.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
