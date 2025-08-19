@@ -1,6 +1,6 @@
 # Tech_Academy_Capstone
 Final project for Tech Academy
-# 🎬 MovieBase — Django Capstone Project
+# MovieBase — Django Capstone Project
 
 MovieBase is a Django-powered web app for tracking your favorite movies.  
 It demonstrates CRUD operations, database integration, search & filter, and template rendering.  
